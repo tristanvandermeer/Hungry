@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 query = "site:www.ocr.org.uk filetype:pdf"
 url = "https://html.duckduckgo.com/html/"
 
-try:
+try: # Not working, 
     headers = {
         "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
@@ -18,7 +18,7 @@ try:
     
     print(response.url)
     print(response.status_code)
-    print(response.text[:1000])  # See what's actually returned
+    print(response.text[:1000])  # Debug
 
 except(Exception):
     print("Balls")
