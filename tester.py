@@ -1,7 +1,7 @@
 # Counting
 total = 0
 math_total = 0
-with open("compare_links.txt", "r") as file:
+with open("pdf_links.txt", "r") as file:
     for line in file:
         total += 1
         if "math"  in line.lower():
