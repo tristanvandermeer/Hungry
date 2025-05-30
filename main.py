@@ -1,18 +1,17 @@
-import downloader
-import random
-import time
-
-def RandomWaitTime():
-    pause = random.uniform(0, 3) # Slow I know but I don't want to explode
-    return pause
+import downloader, linker
+import time, random
 
 def main():
-    with open("compare_links.txt", "r") as file:
+
+    linker.crawl()
+
+    with open("found_pdfs.txt", "r") as file:
         for url in file:
             if "math"  in url.lower(): # Only math (???)
                 print(f"DOWNLOADING: {url}")
-                time.sleep(RandomWaitTime())
+                time.sleep(random.uniform(0, 3))
                 downloader.steal(url.rstrip())
+        file.close()
 
 
 if __name__ == "__main__":
