@@ -1,0 +1,15 @@
+# Counting
+total = 0
+math_total = 0
+with open("compare_links.txt", "r") as file:
+    for line in file:
+        total += 1
+        if "math"  in line.lower():
+            math_total += 1
+    
+
+
+print(f"TOTAL IS: {total}")
+print(f"MATH TOTAL IS: {math_total}")
+
+# Wow ! 2332
