@@ -7,7 +7,7 @@ def RandomWaitTime():
     return pause
 
 def main():
-    with open("links.txt", "r") as file:
+    with open("compare_links.txt", "r") as file:
         for url in file:
             if "math"  in url.lower(): # Only math (???)
                 print(f"DOWNLOADING: {url}")
