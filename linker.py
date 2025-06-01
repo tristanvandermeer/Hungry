@@ -7,6 +7,9 @@ import time
 import random
 from collections import deque
 import http.client
+import pretty
+
+logger = pretty.PrettyLogger()
 
 start_url = "https://www.ocr.org.uk"
 domain = "www.ocr.org.uk"
@@ -23,7 +26,9 @@ user_agents = ["Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like 
 ]
 
 def is_internal(url):
-    return urlparse(url).netloc == domain or urlparse(url).netloc == ''
+    parsed = urlparse(url)
+    netloc = parsed.netloc.lower()
+    return netloc == "" or netloc == domain.lower()
 
 def normalize_url(url):
     url, _ = urldefrag(url)
@@ -31,7 +36,7 @@ def normalize_url(url):
     normalized = parsed._replace(query="", fragment="").geturl()
     return normalized.rstrip('/')
 
-def crawl(start_url, max_depth=6):
+def crawl(start_url, max_depth=20, logger=logger):
     queue = deque()
     queue.append((start_url, 0))
     
@@ -53,17 +58,20 @@ def crawl(start_url, max_depth=6):
                 "Upgrade-Insecure-Requests": "1",
             }
 
-            print(f"[{depth}] Crawling: {current_url}")
+            logger.log(f"[{depth}] Crawling: {current_url}")
+            logger.update()
             response = requests.get(current_url, timeout=10, headers=headers)
             time.sleep(random.uniform(0, 0.8))  # i love humans !
 
             if response.status_code != 200:
                 if response.status_code in [403, 429]:
                     wait_time = random.randint(30, 60)
-                    print(f"  -> Rate-limited. Waiting {wait_time}s.")
+                    logger.log(f"  -> Rate-limited. Waiting {wait_time}s.")
+                    logger.update()
                     time.sleep(wait_time)
                 else:
-                    print(f"  -> Skipped (status {response.status_code})")
+                    logger.log(f"  -> Skipped (status {response.status_code})")
+                    logger.update()
                 continue
 
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -81,22 +89,29 @@ def crawl(start_url, max_depth=6):
 
                 if link.lower().endswith('.pdf'):
                     if link not in pdf_links:
-                        print(f"Found PDF: {link}")
+                        logger.log(f"Found PDF: {link}", "success")
+                        logger.update()
+                        pdf_links.add(link)
                         pedophile.write(link + "\n")
                         pedophile.flush()
                 elif link not in visited:
                     queue.append((link, depth + 1))
 
         except (requests.exceptions.ConnectionError, http.client.RemoteDisconnected) as e:
-            print(f"  !! Connection issue: {e}")
-            print("  -> Waiting 10s before retrying...")
+            logger.log(f"  !! Connection issue: {e}", "warn")
+            logger.update()
+            logger.log("  -> Waiting 10s before retrying...", "warn")
+            logger.update()
+
             time.sleep(10)
             queue.appendleft((current_url, depth))
 
         except Exception as e:
-            print(f"  !! Error: {e}")
+            logger.log(f"  !! Error: {e}", "error")
+            logger.update()
 
-crawl(start_url)
+
+logger.run(lambda logger: crawl(start_url, logger=logger))
 pedophile.close()
 
 """
@@ -105,4 +120,3 @@ with open("found_pdfs.txt", "w") as file:
         file.write(pdf + "\n")
     file.close()
 """
-print("\nTotal PDFs found:", len(pdf_links))

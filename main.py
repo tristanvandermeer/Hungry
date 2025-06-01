@@ -1,4 +1,4 @@
-import downloader, linker
+import downloader, linker, pretty
 import time, random
 
 def main():
@@ -9,7 +9,7 @@ def main():
     with open("found_pdfs.txt", "r") as file:
         for url in file:
             if "math"  in url.lower(): # Only math (???)
-                print(f"DOWNLOADING: {url}")
+                pretty.log(f"DOWNLOADING: {url}")
                 time.sleep(random.uniform(0, 3))
                 downloader.steal(url.rstrip())
         file.close()
