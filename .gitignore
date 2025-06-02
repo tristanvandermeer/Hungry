@@ -175,3 +175,5 @@ cython_debug/
 
 # Don't want this out there
 pdf_links.txt
+fil_links.txt
+.DS_store

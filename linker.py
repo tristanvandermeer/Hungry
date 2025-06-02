@@ -8,14 +8,17 @@ import random
 from collections import deque
 import http.client
 import pretty
+import os
 
 logger = pretty.PrettyLogger()
 
 start_url = "https://www.ocr.org.uk"
 domain = "www.ocr.org.uk"
 visited = set()
-pdf_links = set()
-pedophile = open("pdf_links.txt", "w")
+file_links = set()
+link_file = open("file_links.txt", "w")
+
+interesting_extensions = [".pdf", ".doc", "docx", "xlsx", ".zip", ".txt", ".xls", ".ppt", "pptx", ".csv"]
 
 user_agents = ["Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
@@ -36,7 +39,10 @@ def normalize_url(url):
     normalized = parsed._replace(query="", fragment="").geturl()
     return normalized.rstrip('/')
 
-def crawl(start_url, max_depth=20, logger=logger):
+ # Greedy DFS leaning BFS, not true BFS. 
+ # Initial link numbers are worse at higher depth values. 
+ # If crawling is allowerd to complete, then more links will be found, but lower is better for initial results.
+def crawl(start_url, max_depth=7, logger=logger):
     queue = deque()
     queue.append((start_url, 0))
     
@@ -82,18 +88,19 @@ def crawl(start_url, max_depth=20, logger=logger):
                 if link.startswith(("mailto:", "tel:", "javascript:")): # i miss the rage
                     continue
                 
-                if not is_internal(link):
+                if not is_internal(link): # stay !
                     continue
 
                 link = normalize_url(link)
 
-                if link.lower().endswith('.pdf'):
-                    if link not in pdf_links:
-                        logger.log(f"Found PDF: {link}", "success")
+                link_lower = link.lower() # Avoid repeat of .lower()
+                if link_lower.endswith(interesting_extensions):
+                    if link not in file_links:
+                        logger.log(f"Found File: {link}", "success")
                         logger.update()
-                        pdf_links.add(link)
-                        pedophile.write(link + "\n")
-                        pedophile.flush()
+                        file_links.add(link)
+                        link_file.write(link + "\n")
+                        link_file.flush()
                 elif link not in visited:
                     queue.append((link, depth + 1))
 
@@ -110,13 +117,8 @@ def crawl(start_url, max_depth=20, logger=logger):
             logger.log(f"  !! Error: {e}", "error")
             logger.update()
 
+if os.environ.get('USERNAME').lower() in ["teddy", "scotcher", "sceb", "superfastboy"]:
+    pass
 
 logger.run(lambda logger: crawl(start_url, logger=logger))
-pedophile.close()
-
-"""
-with open("found_pdfs.txt", "w") as file:
-    for pdf in sorted(pdf_links):
-        file.write(pdf + "\n")
-    file.close()
-"""
+link_file.close()
