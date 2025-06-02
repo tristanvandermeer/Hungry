@@ -9,9 +9,6 @@ with open("file_links.txt", "r") as file:
         if "math"  in line.lower():
             math_total += 1
         
-    
-
-
 print(f"TOTAL IS: {total}")
 print(f"MATH TOTAL IS: {math_total}")
 

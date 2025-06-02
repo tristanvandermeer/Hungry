@@ -12,6 +12,7 @@ import shutil
 class PrettyLogger:
     def __init__(self):
         self.console = Console()
+        self._live = Live(auto_refresh=False)
         self.logs = []
 
     def log(self, message, level="info"):
