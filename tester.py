@@ -3,7 +3,7 @@ total = 0
 math_total = 0
 pdf_total = 0
 doc_total = 0
-with open("pdf_links.txt", "r") as file:
+with open("file_links.txt", "r") as file:
     for line in file:
         total += 1
         if "math"  in line.lower():
