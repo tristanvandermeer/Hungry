@@ -6,7 +6,7 @@ def main():
     linker.crawl()
 
     """ oh no not yet, so many pdfs, just want length for now
-    with open("found_pdfs.txt", "r") as file:
+    with open("file_links.txt", "r") as file:
         for url in file:
             if "math"  in url.lower(): # Only math (???)
                 pretty.log(f"DOWNLOADING: {url}")
