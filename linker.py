@@ -16,7 +16,18 @@ start_url = "https://www.ocr.org.uk"
 domain = "www.ocr.org.uk"
 visited = set()
 file_links = set()
-link_file = open("file_links.txt", "w")
+
+script_dir = os.path.dirname(os.path.realpath(__file__))
+base_name = "file_links"
+extension = ".txt"
+
+file_path = os.path.join(script_dir, f"{base_name}{extension}")
+i = 1
+
+while os.path.isfile(file_path):
+    file_path = os.path.join(script_dir, f"{base_name}{i}{extension}")
+    i += 1
+link_file = open(file_path, "w")
 
 interesting_extensions = (".pdf", ".doc", ".docx", ".xlsx", ".zip", ".txt", ".xls", ".ppt", ".pptx", ".csv") # Tuple vs List. 
 # List made it explode last time so here we are.
