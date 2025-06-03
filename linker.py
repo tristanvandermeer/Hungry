@@ -17,6 +17,7 @@ domain = "www.ocr.org.uk"
 visited = set()
 file_links = set()
 
+# Increment files instead of overwriting existing
 script_dir = os.path.dirname(os.path.realpath(__file__))
 base_name = "file_links"
 extension = ".txt"
